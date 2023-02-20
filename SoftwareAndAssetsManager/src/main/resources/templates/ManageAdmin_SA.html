@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.Thymeleaf.org">
+
+<!--This is the ManageEmployee Page template for SuperAdmin Access-->
+<head th:replace="fragments/Head::siteHead"></head>
+<body>
+<header th:replace="fragments/Header::siteHeader"></header>
+
+
+<div class="row">
+<div class="col col-lg-8 offset-lg-2 text-center">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button th:replace="fragments/navBar_Inactive::navBar_AllAssets"></button>
+                    <button th:replace="fragments/navBar_Inactive::navBar_AssetSearch"></button>
+                    <button th:replace="fragments/navBar_Inactive::navBar_AssetStatus"></button>
+                    <button th:replace="fragments/navBar_Inactive::navBar_AssetsExpiring"></button>
+                    <button th:replace="fragments/navBar_Active::navBar_ManageAdmin"></button>
+                    <a href="javascript: document.logoutForm.submit()" class="dropdown-toggle" style="float: right;margin-top: 7px">Sign out</a>
+                    <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                        <input hidden type="submit" value="Sign Out" />
+                    </form>
+                </div>
+            </nav>
+    <div class="tab-content" id="nav-tabContent">
+    <div aria-labelledby="nav-manageAdmin-tab" class="tab-pane fade show active w-100" id="nav-manageAdmin"
+         role="tabpanel" tabindex="0">
+        <div class="row">
+            <div style="text-align: start">
+                <div class="table text-wrap">
+
+
+<!--            <form name="generalAll" action='/GeneralAll/' method='get' style="text-align: start">-->
+<!--                <button class="btn btn-primary" name="GeneralAll" type="submit">General Admin</button>-->
+<!--            </form>-->
+<!--            <form name="generalAll" action='/SuperAll/' method='get' style="text-align: start">-->
+<!--                <button class="btn btn-primary" name=class="dropdown-item" type="submit">Super Admin</button>-->
+<!--            </form>-->
+
+
+                <table  id="AdminTable" class="table table-striped display" >
+
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>FirstName</td>
+                    <td>Surname</td>
+                    <td>username</td>
+                    <td>Password</td>
+                    <td>Department</td>
+                    <td>authority</td>
+                    <td>region</td>
+
+                </tr>
+                </thead>
+                    <tbody class="table-group-divider ">
+                <tr th:each="employee: ${employeeAttribute}">
+                    <td th:text="${employee.ID}"></td>
+                    <td th:text="${employee.firstName}"></td>
+                    <td th:text="${employee.surname}"></td>
+                    <td th:text="${employee.username}"></td>
+                    <td th:text="${employee.Password}"></td>
+                    <td th:text="${employee.department
+
+}"></td>
+                    <td th:text="${employee.authority}"></td>
+                    <td th:text="${employee.region}"></td>
+                </tr>
+                <tfoot>
+                <td>ID</td>
+                <td>FirstName</td>
+                <td>surname</td>
+                <td>username</td>
+                <td>Password</td>
+                <td>Department</td>
+                <td>authority</td>
+                <td>region</td>
+                </tfoot>
+            </table>
+                <!--datatable plugin functions-->
+                <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#AdminTable tfoot td').each(function () {
+                        var title = $(this).text();
+                        $(this).html('<input type="text" placeholder="Search ' +title+ '"/>');
+                    });
+                    var table = $('#AdminTable').DataTable(
+                        {
+                            select: true,
+                            initComplete: function () {
+                                // Apply the search
+                                this.api()
+                                    .columns()
+                                    .every(function () {
+                                        var that = this;
+
+                                        $('input', this.footer()).on('keyup change clear', function () {
+                                            if (that.search() !== this.value) {
+                                                that.search(this.value).draw();
+                                            }
+                                        });
+                                    });
+                            },
+                            pagingType: 'first_last_numbers',
+                            pageLength: 5,
+                            lengthMenu: [5, 10, 500],
+                            autoWidth: false,
+                            aoColumnDefs: [
+                                { 'bSortable': false, 'aTargets': [ 4 ] },
+                                {'width': "10px", "aTargets": [0] }
+                            ],
+
+                        }
+
+                    );
+                    table.on( 'click', 'tr', function () {
+
+                        var rowID =  table.row( this ).data()[0];
+                        var rowfName =  table.row( this ).data()[1];
+                        var rowlName =  table.row( this ).data()[2];
+                        var rowUsername =  table.row( this ).data()[3];
+                        var rowPassword =  table.row( this ).data()[4];
+                        var rowDepartment =  table.row( this ).data()[5];
+                        var rowauthority =  table.row( this ).data()[6];
+                        var rowregion =  table.row( this ).data()[7];
+                        document.getElementById("aFName").value = rowfName;
+                        document.getElementById("aLName").value = rowlName;
+                        //document.getElementById("aUsername").value = rowUsername;
+                        //document.getElementById("aPassword").value = rowPassword;
+                        document.getElementById("aRegion").value = rowregion;
+                        document.getElementById("eID").value = rowID;
+                        document.getElementById("eFName").value = rowfName;
+                        document.getElementById("eLName").value = rowlName;
+                        //document.getElementById("eUsername").value = rowUsername;
+                        //document.getElementById("ePassword").value = rowPassword;
+                        document.getElementById("eRegion").value = rowregion;
+                        document.getElementById("dID").value = rowID;
+                        if (rowUsername == ""){
+                            document.getElementById("aUsername").value = "";
+                            document.getElementById("eUsername").value = "";
+                        }
+                        else {
+                            document.getElementById("aUsername").value = rowUsername;
+                            document.getElementById("eUsername").value = rowUsername;
+                        }
+                        if (rowPassword == ""){
+                            document.getElementById("aPassword").value = "";
+                            document.getElementById("ePassword").value = "";
+                        }
+                        else{
+                            document.getElementById("aPassword").value = rowPassword;
+                            document.getElementById("ePassword").value = rowPassword;
+                        }
+
+                    });
+                });
+            </script>
+
+                </div>
+
+
+
+
+       <div class="col-md-8 column">
+
+           <form name="myForm3" id='myForm3' action='/AdminAll/' method='get'></form>
+           <button class="btn btn-primary" name="AdminAll" id="AdminAll"onclick="Adminall()"> Admin Refresh</button>
+            <script>
+                function Adminall() {
+                    document.getElementById("myForm3").submit();
+                }
+            </script>
+            <button class="btn btn-primary" data-bs-target="#addAdmin"
+                    data-bs-toggle="modal"
+                    type="button"> Add Admin
+            </button>
+            <div class="modal fade" id="addAdmin">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Add Admin</h4></div>
+                                <button class="btn-close" data-bs-dismiss="modal"
+                                        type="button"></button>
+
+                            <form action='/AddAdmin/' id='myForm' method='post' onsubmit="return validateAdd()">
+                            <div class="modal-body">
+                                <div class="row row-col-5">
+                                <!--Now, the data posed will be sent to controllers-->
+                                    <div class="col-4 p-2"><label>First Name: </label></div>
+                                    <div class="col-8 p-2"><input name="firstName" id = "aFName" type="text" required="required"></div><br>
+                                    <div class="col-4 p-2"><label>Last Name: </label></div>
+                                    <div class="col-8 p-2"><input name="surname" id = "aLName" type="text" required="required"></div><br>
+                                    <div class="col-4 p-2"><label>username: </label></div>
+                                    <div class="col-8 p-2"><input name="username" id = "aUsername" type="text"></div><br>
+                                    <div class="col-4 p-2"><label>Password:</label></div>
+                                    <div class="col-8 p-2"><input name="Password" id = "aPassword" type="text"></div><br>
+                                    <div class="col-4 p-2"><label for="aDepartment">Department: </label></div>
+                                    <div class="col-8 p-2">
+                                        <select name="Department" id="aDepartment" form="myForm">
+                                        <option value="COMSC">COMSC</option>
+                                        <option value="FINANCE">FINANCE</option>
+                                        <option value="ARTS">ARTS</option>
+                                        </select>
+                                    </div>
+                                <br>
+                                    <div class="col-4 p-2"><label for="aAuthority">authority: </label></div>
+                                    <div class="col-8 p-2">
+                                        <select name="authority" id="aAuthority" form="myForm">
+                                            <option value="None">None</option>
+                                            <option value="General">General</option>
+                                            <option value="Super">Super</option>
+
+
+                                        </select>
+                                    </div>
+                                <br>
+                                    <div class="col-4 p-2"><label>region: </label></div>
+                                    <div class="col-8 p-2"><input name="region" id = "aRegion" type="text" required="required">
+                                    </div><br>
+
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-success" data-bs-dismiss="modal" id="addSubmit" type="button"
+                                        onclick="submitAdd()"> submit
+                                </button>
+                                <button class="btn btn-danger" data-bs-dismiss="modal"
+                                        type="button"> Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Edit admin/delete-->
+            <!--Here the implementation is different from the search tag-->
+            <button class="btn btn-danger" data-bs-target="#editAdmin"
+                    data-bs-toggle="modal"
+                    type="button">
+                Edit Admin
+            </button>
+            <div class="modal fade" id="editAdmin">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form action='/EditAdmin/' id='myForm2' method='post' onsubmit="return validateEdit()">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit Admin</h4>
+                                <button class="btn-close" data-bs-dismiss="modal"
+                                        type="button"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row row-col-5">
+                                <div class="col-4 p-2"><label>ID: </label></div>
+                                <div class="col-8 p-2"><input name="ID" id = "eID" type="text" readonly required="required"></div>
+                                <div class="col-4 p-2"><label>First Name: </label></div>
+                                <div class="col-8 p-2"><input name="firstName" id = "eFName" type="text" required="required"></div>
+                                <div class="col-4 p-2"><label>Last Name:</label></div>
+                                <div class="col-8 p-2"><input name="surname" id = "eLName" type="text" required="required"></div>
+                                <div class="col-4 p-2"><label>username: </label></div>
+                                <div class="col-8 p-2"><input name="username" id = "eUsername" type="text" ></div>
+                                <div class="col-4 p-2"><label>Password:</label></div>
+                                <div class="col-8 p-2"><input name="Password" id = "ePassword" type="text"></div>
+                                <div class="col-4 p-2"><label for="eDepartment">Department: </label></div>
+                                <div class="col-8 p-2"><select name="Department" id="eDepartment" form="myForm2">
+                                    <option value="COMSC">COMSC</option>
+                                    <option value="FINANCE">FINANCE</option>
+                                    <option value="ARTS">ARTS</option>
+                                </select></div>
+                                <div class="col-4 p-2"><label for="eAuthority">authority:</label></div>
+                                <div class="col-8 p-2"><select name="authority" id="eAuthority" form="myForm2">
+                                    <option value="None">None</option>
+                                    <option value="General">General</option>
+                                    <option value="Super">Super</option>
+
+                                </select></div>
+                                <div class="col-4 p-2"><label>region: </label></div>
+                                <div class="col-8 p-2"><input name="region" id = "eRegion" type="text" required="required"></div>
+
+
+                                <!--leave a place for editpassword, this should be edited into another table in db-->
+                            </div>
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <!--                                                            may not use the same form action, have to make one more form-->
+                                <!--                                                            <button class="btn btn-danger" data-bs-dismiss="modal"-->
+                                <!--                                                                    type="button">-->
+                                <!--                                                                DELETE!-->
+                                <!--                                                            </button>-->
+                                <button class="btn btn-success" data-bs-dismiss="modal"
+                                        onclick="submitEdit()">
+                                    submit
+                                </button>
+                                <button class="btn btn-ready" data-bs-dismiss="modal"
+                                        type="button">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-warning" data-bs-target="#deleteAdmin"
+                    data-bs-toggle="modal"
+                    type="button">
+                Delete Admin
+            </button>
+            <div class="modal fade" id="deleteAdmin">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form action='/DeleteAdmin/' id='myForm4' method='post' onsubmit="return validateDelete()">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title">Delete Admin</h4>
+                                <button class="btn-close" data-bs-dismiss="modal"
+                                        type="button"></button>
+                            </div>
+
+
+                            <div class="modal-body">
+                                <div class="row row-col-5">
+                                <div class="col-6 p-2">
+                                You are going to delete this Admin...
+                                <label>ID: </label>
+                                </div>
+                                <div class="col-6 p-2">
+                                    <input name="ID" id = "dID" type="text" readonly required="required">
+                                </div>
+
+                                <br>
+                                </div>
+                                <!--leave a place for editpassword, this should be edited into another table in db-->
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button class="btn btn-success" data-bs-dismiss="modal"
+                                        onclick="submitdelete()">
+                                    submit
+                                </button>
+                                <button class="btn btn-ready" data-bs-dismiss="modal"
+                                        type="button">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+       </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    function validateAdd(){
+        if(
+            document.getElementById("aAuthority").value == "None"
+            && (document.getElementById("aUsername").value !== ""
+                || document.getElementById("aPassword").value !== "")
+        ){  alert("A person who is not Admin cannot have Username and Password.");
+            return false;
+
+        }
+        else if((document.getElementById("aAuthority").value == "Super"
+                ||document.getElementById("aAuthority").value == "General")
+            &&((document.getElementById("aUsername").value == ""
+                ||document.getElementById("aPassword").value==""))
+        ){
+            alert("An Admin must have username and password");
+            return false;
+        }
+        else if (
+            document.getElementById("aFName").value == ""
+            || document.getElementById("aLName").value ==""
+            || document.getElementById("aDepartment").value ==""
+            || document.getElementById("aAuthority").value ==""
+            || document.getElementById("aRegion").value ==""
+        ){
+            alert("You have to fill in all necessary fields");
+            return false;
+        }
+        else{
+            return  true;
+        }
+
+    }
+
+
+    function submitAdd() {
+    if (validateAdd()===true){
+            document.getElementById("myForm").submit();
+    }
+    else
+    {
+        window.location.replace("http://localhost:8080/manageAdminSupAdmin");
+    }}
+
+    function validateEdit(){
+        if(
+            document.getElementById("eAuthority").value == "None"
+            && (document.getElementById("eUsername").value !== ""
+                || document.getElementById("ePassword").value !== "")
+        ){
+            alert("A person who is not Admin cannot have Username and Password.");
+            return false;
+        }
+        else if((document.getElementById("eAuthority").value == "Super"
+                ||document.getElementById("eAuthority").value == "General")
+            &&((document.getElementById("eUsername").value == ""
+                ||document.getElementById("ePassword").value==""))
+        ){
+            alert("An Admin must have username and password");
+            return false;
+        }
+        else if (
+            document.getElementById("eFName").value == ""
+            || document.getElementById("eLName").value ==""
+            || document.getElementById("eDepartment").value ==""
+            || document.getElementById("eAuthority").value ==""
+            || document.getElementById("eRegion").value ==""
+        ){
+            alert("You have to fill in all necessary fields");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function submitEdit() {
+        if (validateEdit()===true)
+        {document.getElementById("myForm2").submit();}
+        else
+        {
+            window.location.replace("http://localhost:8080/manageAdminSupAdmin");
+        }
+    }
+    function validateDelete(){
+        if (document.getElementById("dID").value == ""){
+            alert("Please click on the Employee You are going to delete");
+            return false;
+        }
+        else
+        {return true;}
+    }
+    function submitdelete(){
+        if (
+            validateDelete()===true
+        )
+        {document.getElementById("myForm4").submit();}
+        else
+        {
+            window.location.replace("http://localhost:8080/manageAdminSupAdmin");
+        }
+
+    }
+
+</script>
+<script th:replace="fragments/Script_SA::script"></script>
+
+</body>
+
+
+</html>

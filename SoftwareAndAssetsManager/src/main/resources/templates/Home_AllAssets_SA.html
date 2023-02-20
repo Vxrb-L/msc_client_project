@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.Thymeleaf.org">
+
+<!--This is the Home Page template for SuperAdmin Access-->
+<head th:replace="fragments/Head::siteHead"></head>
+<body>
+<header th:replace="fragments/Header::siteHeader"></header>
+
+
+<div class="row">
+    <div class="col col-lg-8 offset-lg-2 text-center">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button th:replace="fragments/navBar_Active::navBar_AllAssets"></button>
+                <button th:replace="fragments/navBar_Inactive::navBar_AssetSearch"></button>
+                <button th:replace="fragments/navBar_Inactive::navBar_AssetStatus"></button>
+                <button th:replace="fragments/navBar_Inactive::navBar_AssetsExpiring"></button>
+                <button th:replace="fragments/navBar_Inactive::navBar_ManageAdmin"></button>
+                <a href="javascript: document.logoutForm.submit()" class="dropdown-toggle" style="float: right;margin-top: 7px">Sign out</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out" />
+                </form>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <!--                Assets Summary-->
+            <div aria-labelledby="nav-assets-tab" class="tab-pane fade show active w-100" id="nav-assets"
+                 role="tabpanel" tabindex="0">
+                <div class="row">
+                    <div style="text-align: center">
+                        <br/>
+                        <br/>
+                        <div class="table-responsive w-100 ">
+                            <table class="table table-hover table-light table-striped w-100 justify-content-between modal-dialog-scrollable display"
+                                   id="assetsSummary">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Asset Name</th>
+                                    <th scope="col">Asset Type</th>
+                                    <th scope="col">Assigned</th>
+                                    <th scope="col">Unassigned</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-group-divider ">
+                                <tr th:each="asset: ${assetSummary}">
+                                    <td th:text="${asset.ID}"></td>
+                                    <td th:text="${asset.assetName}"></td>
+                                    <td th:text="${asset.assetType}"></td>
+                                    <td th:text="${asset.assigned}"></td>
+                                    <td th:text="${asset.unassigned}"></td>
+                                    <td th:text="${asset.total}"></td>
+                                </tr>
+                                <tbody>
+                            </table>
+                            <table class="table table-hover table-light table-striped w-100 justify-content-between modal-dialog-scrollable display"
+                                   id="assetsSummaryTotal">
+
+                                <tfoot>
+                                <tr>
+                                    <th scope="col">Total Assigned</th>
+                                    <th scope="col">Total Unassigned</th>
+                                    <th scope="col">Total Assets</th>
+                                </tr>
+                                </tfoot>
+                                <tbody class="table-group-divider ">
+                                <tr th:object="${assetSummary.get(0)}">
+                                    <td th:utext="*{totalAssigned}"></td>
+                                    <td th:utext="*{totalUnassigned}"></td>
+                                    <td th:utext="*{totalAssets}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <br>
+                        <!--Add Assets -->
+                        <div class="col-md-2 offset-md-5">
+
+                            <!--add assets button-->
+                            <button class="btn btn-primary" data-bs-target="#addAsset" data-bs-toggle="modal"
+                                    type="button">
+                                Add Asset
+                            </button>
+                            <div class="modal fade" id="addAsset">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Add Asset</h4>
+                                            <button class="btn-close" data-bs-dismiss="modal"
+                                                    type="button"></button>
+                                        </div>
+
+                                        <!--Add asset Pop Up-->
+                                        <div class="modal-body">
+                                            <div class="wrapleft">
+                                                <form id="addAssetForm" class="row row-col-5 needs-validation"
+                                                      action="/addAsset" method="POST">
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="assetName">Asset Name</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <input class="form-control" id="assetName" name="assetName"
+                                                               placeholder="Asset Name"
+                                                               type="text" required>
+                                                    </div>
+                                                    <div class="valid-feedback">
+                                                        Looks good!
+                                                    </div>
+
+<!--                                                    drop down menu for pre set asset values-->
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="assetType">Asset Type</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <select class="form-control" id="assetType" name="assetType">
+                                                            <option value="Software">Software</option>
+                                                            <option value="Laptop">Laptop</option>
+                                                            <option value="Monitor">Monitor</option>
+                                                            <option value="Keyboard">Keyboard</option>
+                                                            <option value="Mouse">Mouse</option>
+                                                        </select>
+                                                    </div>
+<!--                                                    drop down menu for pre set status values-->
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="status"> Status</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <select class="form-control" id="status" name="status">
+                                                            <option value="New">New (for Assets)</option>
+                                                            <option value="Damaged">Damaged (for Assets)</option>
+                                                            <option value="Refurbished">Refurbished (for Assets)</option>
+                                                            <option value="Needs Repair">Needs Repair (for Assets)</option>
+                                                            <option value="Expired Warranty">Expired Warranty (for Assets)</option>
+                                                            <option value="Updated">Updated (for Software)</option>
+                                                            <option value="Needs Update">Needs Update (for Software)</option>
+                                                            <option value="Expired License">Expired License (for Software)
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="modelNumber">Model Number</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <input class="form-control" id="modelNumber" name="modelNumber"
+                                                               placeholder="Model Number (For Assets Only)"
+                                                               type="text">
+                                                    </div>
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="version">Version</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <input class="form-control" id="version" name="version"
+                                                               placeholder="Version (For Softwares Only)"
+                                                               type="text">
+                                                    </div>
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="dateOfPurchase">Date Of
+                                                            Purchase</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <input class="form-control" id="dateOfPurchase"
+                                                               name="dateOfPurchase"
+                                                               placeholder="Date of Purchase"
+                                                               type="date" required>
+                                                    </div>
+                                                    <div class="col-4 p-2">
+                                                        <label class="form-label" for="dateOfExpiry">Date Of
+                                                            Expiry</label>
+                                                    </div>
+                                                    <div class="col-7 p-2">
+                                                        <input class="form-control" id="dateOfExpiry"
+                                                               name="dateOfExpiry"
+                                                               placeholder="Date of Expiry"
+                                                               type="date">
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-success" type="submit">
+                                                            submit
+                                                        </button>
+                                                        <button class="btn btn-danger" data-bs-dismiss="modal"
+                                                                type="button">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--                            Page navigation removed as pagination covers in datatables functionality-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+<script th:replace="fragments/Script_SA::script"></script>
+</body>
+</html>
